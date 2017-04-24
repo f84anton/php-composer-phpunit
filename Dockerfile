@@ -18,6 +18,7 @@ RUN apt-get update && \
     subversion \
     unzip \
     wget \
+    openssh-client \
   --no-install-recommends && rm -r /var/lib/apt/lists/*
 
 #RUN docker-php-ext-install bcmath mcrypt zip bz2 mbstring pcntl xsl \
