@@ -19,7 +19,7 @@ RUN apt-get update -q && \
     openssh-client \
     libimage-exiftool-perl \
     libtidy-0.99 \
-    libc-client2007e 
+    libc-client2007e \
     libmagickwand-6.q16-2 \
     && rm -r /var/lib/apt/lists/*
 
