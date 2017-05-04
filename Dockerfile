@@ -3,15 +3,14 @@ FROM php:7.0-cli
 RUN echo "memory_limit=-1" > $PHP_INI_DIR/conf.d/memory-limit.ini \
  && echo "date.timezone=${PHP_TIMEZONE:-Europe/Moscow}" > "$PHP_INI_DIR/conf.d/date_timezone.ini"
 
+RUN ln -fs /usr/share/zoneinfo/${PHP_TIMEZONE:-Europe/Moscow} /etc/localtime
+ENV DEV_PACKAGES "libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libbz2-dev \
+    libxslt-dev libldap2-dev   libz-dev  libmemcached-dev libtidy-dev libcurl4-openssl-dev libc-client2007e-dev \
+    libkrb5-dev libmagickwand-6.q16-dev libxml2-dev libedit-dev libicu-dev librecode-dev"
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update -q && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -qy \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libpng12-dev \
-    libbz2-dev \
-    libxslt-dev \
-    libldap2-dev \
+   apt-get install -qy --no-install-recommends \
     curl \
     git \
     subversion \
@@ -19,23 +18,17 @@ RUN apt-get update -q && \
     wget \
     openssh-client \
     libimage-exiftool-perl \
-    libz-dev \
-    libmemcached-dev \
-    libtidy-0.99 libtidy-dev \
-    libcurl4-openssl-dev \
-    libc-client2007e libc-client2007e-dev \
-    libkrb5-dev \
-    libmagickwand-6.q16-2 libmagickwand-6.q16-dev \
-    libxml2-dev libedit-dev \
-    libicu-dev librecode-dev \
-  --no-install-recommends && rm -r /var/lib/apt/lists/*
-#    php-pear \
+    libtidy-0.99 \
+    libc-client2007e 
+    libmagickwand-6.q16-2 \
+    && rm -r /var/lib/apt/lists/*
 
-RUN ln -fs /usr/share/zoneinfo/${PHP_TIMEZONE:-Europe/Moscow} /etc/localtime
 
-RUN CFLAGS="-I/usr/src/php" docker-php-ext-install bcmath mcrypt zip bz2 mbstring pcntl xsl tidy curl ftp \
-    pdo pdo_mysql dom xml xmlreader xmlrpc xmlwriter simplexml \
-    readline soap tokenizer \
+RUN apt-get update -q \
+  && apt-get install -qy --no-install-recommends ${DEV_PACKAGES} \
+  && CFLAGS="-I/usr/src/php" docker-php-ext-install bcmath mcrypt zip bz2 mbstring pcntl xsl tidy curl \
+    pdo pdo_mysql dom xml xmlreader xmlrpc xmlwriter simplexml readline soap tokenizer \
+    ctype calendar  sysvmsg sysvsem sysvshm shmop gettext  fileinfo  sockets opcache \
   && docker-php-ext-configure recode --with-recode && docker-php-ext-install recode \
   && docker-php-ext-configure exif --enable-exif && docker-php-ext-install exif \
   && docker-php-ext-configure intl --enable-intl &&  docker-php-ext-install intl \  
@@ -45,7 +38,11 @@ RUN CFLAGS="-I/usr/src/php" docker-php-ext-install bcmath mcrypt zip bz2 mbstrin
   && echo 'autodetect' | pecl install -o -f imagick && docker-php-ext-enable imagick \
   && echo 'no' | pecl install -o -f memcached && docker-php-ext-enable memcached \
   && pecl install -o -f igbinary msgpack && docker-php-ext-enable igbinary msgpack \
-  && pecl install -o -f redis && docker-php-ext-enable redis 
+  && pecl install -o -f redis && docker-php-ext-enable redis \
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${DEV_PACKAGES} \
+  && rm -r /var/lib/apt/lists/*
+
+
 
 #newrelic
 #  && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
