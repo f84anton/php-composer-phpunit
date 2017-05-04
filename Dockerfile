@@ -6,7 +6,7 @@ RUN echo "memory_limit=-1" > $PHP_INI_DIR/conf.d/memory-limit.ini \
 RUN ln -fs /usr/share/zoneinfo/${PHP_TIMEZONE:-Europe/Moscow} /etc/localtime
 ENV DEV_PACKAGES "libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libbz2-dev \
     libxslt-dev libldap2-dev   libz-dev  libmemcached-dev libtidy-dev libcurl4-openssl-dev libc-client2007e-dev \
-    libkrb5-dev libmagickwand-6.q16-dev libxml2-dev libedit-dev libicu-dev librecode-dev"
+    libkrb5-dev libmagickwand-6.q16-dev libxml2-dev libedit-dev libicu-dev librecode-dev libxslt1-dev"
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -q && \
@@ -21,6 +21,11 @@ RUN apt-get update -q && \
     libtidy-0.99 \
     libc-client2007e \
     libmagickwand-6.q16-2 \
+    libmcrypt4 \
+    libmemcached11 \
+    librecode0 \
+    libmemcachedutil2 \
+    libxslt1.1 \
     && rm -r /var/lib/apt/lists/*
 
 
