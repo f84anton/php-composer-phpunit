@@ -73,4 +73,6 @@ RUN curl -s -f -L -o /tmp/installer.php https://raw.githubusercontent.com/compos
 
 RUN composer require -d /composer --ansi --no-interaction phpunit/php-invoker phpunit/dbunit
 
+RUN git config --global user.email "yourci@gmail.com" && git config --global user.name "YourCI"
+
 WORKDIR /app
