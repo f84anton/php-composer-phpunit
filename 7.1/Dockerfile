@@ -44,6 +44,7 @@ RUN apt-get update -q \
   && echo 'no' | pecl install -o -f memcached && docker-php-ext-enable memcached \
   && pecl install -o -f igbinary msgpack && docker-php-ext-enable igbinary msgpack \
   && pecl install -o -f redis && docker-php-ext-enable redis \
+  && wget -q http://pecl.php.net/get/translit -O /tmp/translit && pecl install -o -f /tmp/translit && docker-php-ext-enable translit \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${DEV_PACKAGES} \
   && rm -r /var/lib/apt/lists/*
 
