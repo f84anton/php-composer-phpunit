@@ -4,10 +4,11 @@ RUN echo "memory_limit=-1" > $PHP_INI_DIR/conf.d/memory-limit.ini \
  && echo "date.timezone=${PHP_TIMEZONE:-Europe/Moscow}" > "$PHP_INI_DIR/conf.d/date_timezone.ini"
 
 RUN ln -fs /usr/share/zoneinfo/${PHP_TIMEZONE:-Europe/Moscow} /etc/localtime
-ENV DEV_PACKAGES "libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libbz2-dev \
+ENV DEV_PACKAGES="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libbz2-dev \
     libxslt-dev libldap2-dev   libz-dev  libmemcached-dev libtidy-dev libcurl4-openssl-dev libc-client2007e-dev \
-    libkrb5-dev libmagickwand-6.q16-dev libxml2-dev libedit-dev libicu-dev librecode-dev libxslt1-dev"
-ENV DEBIAN_FRONTEND noninteractive
+    libkrb5-dev libmagickwand-6.q16-dev libxml2-dev libedit-dev libicu-dev librecode-dev libxslt1-dev \
+    libyaml-dev python3-pip build-essential python3-dev" \
+  DEBIAN_FRONTEND="noninteractive"
 
 RUN apt-get update -q && \
    apt-get install -qy --no-install-recommends \
@@ -26,6 +27,8 @@ RUN apt-get update -q && \
     librecode0 \
     libmemcachedutil2 \
     libxslt1.1 \
+    libyaml-0-2 \
+    python3 \
     && rm -r /var/lib/apt/lists/*
 
 
@@ -45,15 +48,15 @@ RUN apt-get update -q \
   && pecl install -o -f igbinary msgpack && docker-php-ext-enable igbinary msgpack \
   && pecl install -o -f redis && docker-php-ext-enable redis \
   && wget -q http://pecl.php.net/get/translit -O /tmp/translit && pecl install -o -f /tmp/translit && docker-php-ext-enable translit \
+  && pip3 install awscli --upgrade \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${DEV_PACKAGES} \
-  && rm -r /var/lib/apt/lists/*
+  && rm -r /var/lib/apt/lists/* /tmp/translit
 
 
-
-ENV PATH "/composer/vendor/bin:$PATH"
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV COMPOSER_HOME /composer
-ENV COMPOSER_VERSION 1.4.1
+ENV PATH="/composer/vendor/bin:$PATH" \
+  COMPOSER_ALLOW_SUPERUSER=1 \
+  COMPOSER_HOME="/composer" \
+  COMPOSER_VERSION="1.4.2"
 
 RUN curl -s -f -L -o /tmp/installer.php https://raw.githubusercontent.com/composer/getcomposer.org/da290238de6d63faace0343efbdd5aa9354332c5/web/installer \
  && php -r " \
