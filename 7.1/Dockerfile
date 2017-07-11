@@ -7,7 +7,7 @@ RUN ln -fs /usr/share/zoneinfo/${PHP_TIMEZONE:-Europe/Moscow} /etc/localtime
 ENV DEV_PACKAGES="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libbz2-dev \
     libxslt-dev libldap2-dev   libz-dev  libmemcached-dev libtidy-dev libcurl4-openssl-dev libc-client2007e-dev \
     libkrb5-dev libmagickwand-6.q16-dev libxml2-dev libedit-dev libicu-dev librecode-dev libxslt1-dev \
-    libyaml-dev python3-pip build-essential python3-dev" \
+    libyaml-dev python-pip python2.7-dev" \
   DEBIAN_FRONTEND="noninteractive"
 
 RUN apt-get update -q && \
@@ -28,7 +28,8 @@ RUN apt-get update -q && \
     libmemcachedutil2 \
     libxslt1.1 \
     libyaml-0-2 \
-    python3 \
+    python2.7 \
+    build-essential \
     && rm -r /var/lib/apt/lists/*
 
 
@@ -48,7 +49,7 @@ RUN apt-get update -q \
   && pecl install -o -f igbinary msgpack && docker-php-ext-enable igbinary msgpack \
   && pecl install -o -f redis && docker-php-ext-enable redis \
   && wget -q http://pecl.php.net/get/translit -O /tmp/translit && pecl install -o -f /tmp/translit && docker-php-ext-enable translit \
-  && pip3 install awscli --upgrade \
+  && pip install awscli --upgrade \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${DEV_PACKAGES} \
   && rm -r /var/lib/apt/lists/* /tmp/translit
 
@@ -84,5 +85,5 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
   && npm install --global gulp-cli
-  
+
 WORKDIR /app
