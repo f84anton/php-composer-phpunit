@@ -75,4 +75,14 @@ RUN composer require -d /composer --ansi --no-interaction phpunit/php-invoker ph
 
 RUN git config --global user.email "yourci@gmail.com" && git config --global user.name "YourCI"
 
+ENV NODE_VERSION=8.1.3 \
+  YARN_VERSION=0.24.6 \
+  NPM_CONFIG_LOGLEVEL=info 
+
+RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
+  && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
+  && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
+  && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+  && npm install --global gulp-cli
+
 WORKDIR /app
