@@ -49,10 +49,11 @@ RUN apt-get update -q \
   && pecl install -o -f igbinary msgpack && docker-php-ext-enable igbinary msgpack \
   && pecl install -o -f redis && docker-php-ext-enable redis \
   && wget -q http://pecl.php.net/get/translit -O /tmp/translit && pecl install -o -f /tmp/translit && docker-php-ext-enable translit \
-  && pip install awscli --upgrade \
+  && pecl install xdebug && docker-php-ext-enable xdebug \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${DEV_PACKAGES} \
   && rm -r /var/lib/apt/lists/* /tmp/translit
 
+RUN pip install awscli --upgrade
 
 ENV PATH="/composer/vendor/bin:$PATH" \
   COMPOSER_ALLOW_SUPERUSER=1 \
@@ -76,17 +77,18 @@ RUN composer require -d /composer --ansi --no-interaction phpunit/php-invoker ph
 
 RUN git config --global user.email "yourci@gmail.com" && git config --global user.name "YourCI"
 
-ENV NODE_VERSION=8.1.3 \
-  YARN_VERSION=0.24.6 \
+ENV NODE_VERSION=8.2.1 \
   NPM_CONFIG_LOGLEVEL=info 
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
-  && npm install --global gulp-cli \
+  && npm install --global gulp-cli yarn \
   && chown -R root. /usr/local/lib
 
 RUN ln -sf /usr/bin/python2.7 /usr/local/bin/python
 
 WORKDIR /app
+
+USER www-data
