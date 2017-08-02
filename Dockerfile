@@ -87,6 +87,6 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && npm install --global gulp-cli yarn \
   && chown -R root. /usr/local/lib
 
-RUN ln -sf /usr/bin/python2.7 /usr/local/bin/python
+RUN ln -sf /usr/bin/python2.7 /usr/bin/python
 
 WORKDIR /app
