@@ -50,10 +50,10 @@ RUN apt-get update -q \
   && pecl install -o -f redis && docker-php-ext-enable redis \
   && wget -q http://pecl.php.net/get/translit -O /tmp/translit && pecl install -o -f /tmp/translit && docker-php-ext-enable translit \
   && pecl install xdebug && docker-php-ext-enable xdebug \
+  && pip install awscli --upgrade \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${DEV_PACKAGES} \
   && rm -r /var/lib/apt/lists/* /tmp/translit
 
-RUN pip install awscli --upgrade
 
 ENV PATH="/composer/vendor/bin:$PATH" \
   COMPOSER_ALLOW_SUPERUSER=1 \
@@ -91,4 +91,4 @@ RUN ln -sf /usr/bin/python2.7 /usr/local/bin/python
 
 WORKDIR /app
 
-USER www-data
+#USER www-data
