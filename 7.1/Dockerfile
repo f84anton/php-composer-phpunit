@@ -84,10 +84,18 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
-  && npm install --global gulp-cli yarn \
+  && npm install --global gulp-cli webpack gulp \
   && chown -R root. /usr/local/lib
 
 RUN ln -sf /usr/bin/python2.7 /usr/bin/python
+
+RUN git clone --recursive https://github.com/sass/node-sass.git /root/node-sass \
+    && cd /root/node-sass && npm install && node scripts/build -f \
+    && mkdir -p /usr/local/lib/node-sass/ \
+    && cp vendor/linux-x64*/binding.node /usr/local/lib/node-sass/ \
+    && rm -rf /root/node-sass
+
+ENV SASS_BINARY_PATH=/usr/local/lib/node-sass/binding.node
 
 WORKDIR /app
 
