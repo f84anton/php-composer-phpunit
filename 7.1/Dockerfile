@@ -58,7 +58,7 @@ RUN apt-get update -q \
 ENV PATH="/composer/vendor/bin:$PATH" \
   COMPOSER_ALLOW_SUPERUSER=1 \
   COMPOSER_HOME="/composer" \
-  COMPOSER_VERSION="1.4.2"
+  COMPOSER_VERSION="1.5.2"
 
 RUN curl -s -f -L -o /tmp/installer.php https://raw.githubusercontent.com/composer/getcomposer.org/da290238de6d63faace0343efbdd5aa9354332c5/web/installer \
  && php -r " \
@@ -77,7 +77,7 @@ RUN composer require -d /composer --ansi --no-interaction phpunit/php-invoker ph
 
 RUN git config --global user.email "yourci@gmail.com" && git config --global user.name "YourCI"
 
-ENV NODE_VERSION=8.2.1 \
+ENV NODE_VERSION=8.9.1 \
   NPM_CONFIG_LOGLEVEL=info 
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
@@ -96,6 +96,13 @@ RUN git clone --recursive https://github.com/sass/node-sass.git /root/node-sass 
     && rm -rf /root/node-sass
 
 ENV SASS_BINARY_PATH=/usr/local/lib/node-sass/binding.node
+
+ENV DOCKER_VER=17.05.0-ce
+
+RUN curl -s -L -o "/tmp/docker-$DOCKER_VER.tgz" "https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VER.tgz" \
+  && tar -xz -C /tmp -f "/tmp/docker-$DOCKER_VER.tgz" \
+  && mv /tmp/docker/* /usr/bin
+
 
 WORKDIR /app
 
