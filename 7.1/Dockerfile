@@ -30,8 +30,12 @@ RUN apt-get update -q && \
     libyaml-0-2 \
     python2.7 \
     build-essential \
+    locales locales-all \
     && rm -r /var/lib/apt/lists/*
 
+ENV LANG='en_US.UTF-8' \
+    LANGUAGE='en_US.UTF-8' \
+    LC_ALL='en_US.UTF-8'
 
 RUN apt-get update -q \
   && apt-get install -qy --no-install-recommends ${DEV_PACKAGES} \
